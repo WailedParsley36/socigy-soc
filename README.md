@@ -27,10 +27,13 @@ Tato práce představuje návrh a implementaci inovativní sociální platformy 
 
 - `/docs.pdf` - Dokumentace projektu
 - `/deployment` - Konfigurační soubory pro Kubernetes
+- `/schemas` - Schémata
 - `/server` - Zdrojové kódy jednotlivých mikroslužeb
 - `/client/web` - Zdrojové kódy pro webovou aplikaci
 - `/client/native` - Zdrojové kódy pro mobilní aplikaci s implementací pluginového systému a passkeys modulu
+- `/client/native/app-old-iteration` - Zdrojové kódy pro přechozí iteraci mobilní aplikace s implementací pluginového systému a passkeys modulu v jedné aplikaci
 - `/db-scripts` - Databázové skripty s tabulkami
+- `/plugins` - Vlastní Rust WASM UI Framework
 
 ## Licence
 

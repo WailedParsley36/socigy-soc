@@ -1,0 +1,21 @@
+{
+  "name": "socigy-plugin-loader",
+  "version": "1.0.0",
+  "description": "",
+  "main": "./scripts/dist/run.js",
+  "type": "module",
+  "scripts": {
+    "clean": "",
+    "build-ts": "npm i && tsc",
+    "start": "scripts/npm/start.sh",
+    "test": "scripts/npm/test.sh",
+    "build": "cd example-plugin && wasm-pack build --target web",
+    "release": "cd example-plugin && wasm-pack build --target web --release"
+  },
+  "author": "WailedParsley36",
+  "license": "ISC",
+  "devDependencies": {
+    "@types/node": "^22.12.0",
+    "typescript": "^5.7.3"
+  }
+}

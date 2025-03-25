@@ -1,0 +1,27 @@
+{
+  "language": "rust",
+  "permissions": {
+    "socigy.ui.components.replace": {
+      "description": "Required to change your profile page appearance",
+      "link": "https://dev.socigy.com/docs/permissions/ui/components/replace",
+      "required": true,
+
+      "componentIds": [
+        "81fada10-0924-4f60-bfe8-51c0ac228297",
+        "f74be237-f439-4ef0-85a8-a773db41e8bd"
+      ]
+    },
+    "socigy.ui.components.delete": {
+      "description": "",
+      "link": "https://dev.socigy.com/docs/permissions/ui/components/delete",
+      "required": true,
+
+      "componentIds": ["8f45bf15-eade-4a72-a1e6-2e03b99a2654"]
+    }
+  },
+  "ui": {
+    "windows": {
+      "a005b6ce-a66e-4c81-924d-3d206e574718": "Window for showing news, blogs and etc."
+    }
+  }
+}

@@ -1,0 +1,7 @@
+{
+  // "liveServer.settings.https": {
+  //   "enable": true, //set it true to enable the feature.
+  //   "cert": "\\wsl.localhost\\Ubuntu-24.04\\home\\dev\\plugins\\scripts\\example-web\\server.pem", //full path of the certificate
+  //   "key": "\\wsl.localhost\\Ubuntu-24.04\\home\\dev\\plugins\\scripts\\example-web\\server-key.pem" //full path of the private key
+  // }
+}

@@ -1,0 +1,16 @@
+{
+  "permissions": {
+    "socigy.ui.components.replace": {
+      "description": "We need to replace some components to make the new design work",
+      "link": "https://dev.socigy.com/docs/permissions/ui/components/replace",
+      "required": true,
+
+      "componentIds": ["6396e8ae-6ff9-4676-93a9-f1fb8f140e8d"]
+    },
+    "socigy.ui.components.delete": {
+      "description": "We remove some components that are not needed in the new design",
+      "link": "https://dev.socigy.com/docs/permissions/ui/components/delete",
+      "required": false
+    }
+  }
+}

@@ -1,0 +1,9 @@
+code --install-extension 1yib.rust-bundle
+code --install-extension dustypomerleau.rust-syntax
+code --install-extension fill-labs.dependi
+code --install-extension rust-lang.rust-analyzer
+code --install-extension vadimcn.vscode-lldb
+code --install-extension github.copilot
+code --install-extension github.copilot-chat
+code --install-extension gruntfuggly.todo-tree
+code --install-extension tamasfe.even-better-toml
