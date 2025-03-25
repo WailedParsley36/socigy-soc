@@ -1,0 +1,80 @@
+apiVersion: "acid.zalan.do/v1"
+kind: postgresql
+metadata:
+  name: main-db 
+  namespace: default
+spec:
+  # resources:
+  #   requests:
+  #     cpu: 10m
+  #     memory: 100Mi
+  #   limits:
+  #     cpu: 300m
+  #     memory: 300Mi
+  volume:
+    size: "5Gi"
+  teamId: socigy
+  enableLogicalBackup: false
+  enableConnectionPooler: true
+  enableReplicaConnectionPooler: true
+  numberOfInstances: 2
+  connectionPooler:
+    numberOfInstances: 2
+    mode: "transaction"
+    schema: "pooler"
+    user: "pooler"
+    resources:
+      requests:
+        cpu: 500m
+        memory: 100Mi
+      limits:
+        cpu: "1"
+        memory: 100Mi
+  users:
+    admin:
+      - superuser
+      - createdb
+    auth_service:
+      - login
+    user_service:
+      - login
+    content_service:
+      - login
+    plugin_service:
+      - login
+  databases:
+    auth_db: auth_service
+    user_db: user_service
+    content_db: content_service
+    plugin_db: plugin_service
+  postgresql:
+    version: "17"
+    parameters:
+      password_encryption: scram-sha-256
+  # tls:
+  #   secretName: "pg-tls-secret"
+  #   caFile: "ca.crt"
+---
+apiVersion: cert-manager.io/v1
+kind: Certificate
+metadata:
+  name: pg-tls
+  namespace: default
+spec:
+  secretName: pg-tls-secret
+  issuerRef:
+    name: selfsigned-issuer
+    kind: ClusterIssuer
+  commonName: "postgres.api.socigy.com"
+  dnsNames:
+    - data.socigy.com
+    - socigy-main-db.default.svc.cluster.local
+    - postgres-postgresql.default.svc.cluster.local
+    - postgres-postgresql.svc.local
+    - postgres-postgresql.local
+    - postgres-postgresql
+    - postgres.svc.cluster.local
+    - postgres
+    - postgres.local
+  duration: 8760h
+  renewBefore: 360h

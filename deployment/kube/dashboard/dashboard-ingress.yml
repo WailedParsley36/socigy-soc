@@ -1,0 +1,29 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: kubernetes-dashboard-ingress
+  namespace: kubernetes-dashboard
+  annotations:
+    kubernetes.io/ingress.class: "nginx"
+    kubernetes.io/ingressClassName: "nginx"
+    nginx.ingress.kubernetes.io/backend-protocol: "HTTPS"
+    cert-manager.io/cluster-issuer: "letsencrypt-dns"
+
+    # nginx.ingress.kubernetes.io/auth-url: "https://auth.api.socigy.com/oauth2/auth"
+    # nginx.ingress.kubernetes.io/auth-signin: "https://auth.api.socigy.com/oauth2/start?rd=$request_uri"
+spec:
+  tls:
+    - hosts:
+        - kube-dashboard.api.socigy.com
+      secretName: kube-dashboard-tls-secret
+  rules:
+    - host: kube-dashboard.api.socigy.com
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: kubernetes-dashboard-kong-proxy
+                port:
+                  number: 8443

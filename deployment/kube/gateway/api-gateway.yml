@@ -1,0 +1,41 @@
+apiVersion: gateway.networking.k8s.io/v1beta1
+kind: Gateway
+metadata:
+  name: api-gateway
+  namespace: default
+spec:
+  gatewayClassName: consul
+  listeners:
+    - protocol: HTTPS
+      port: 8081
+      name: https
+      tls:
+        mode: Terminate
+        certificateRefs:
+          - name: consul-api-tls-secret
+            kind: Secret
+            group: ""
+      allowedRoutes:
+        namespaces:
+          from: Same
+    - protocol: HTTP
+      port: 8080
+      name: http
+      allowedRoutes:
+        namespaces:
+          from: Same
+---
+apiVersion: cert-manager.io/v1
+kind: Certificate
+metadata:
+  name: public-socigy-tls
+spec:
+  secretName: public-socigy-tls-secret
+  issuerRef:
+    name: letsencrypt-dns
+    kind: ClusterIssuer
+  dnsNames:
+    - socigy.com
+    - api.socigy.com
+    - dev.socigy.com
+    - business.socigy.com

@@ -1,0 +1,39 @@
+extraArgs:
+  - --enable-logs=true
+  - --audit-log-path=/var/log/audit.log
+  - --disable-settings-authorizer=true
+  - --enable-skip-login=false
+  - --token-ttl=900
+
+apiServer:
+  enabled: true
+  securePort: 8443
+
+  service:
+    externalPort: 443
+    internalPort: 8443
+    type: ClusterIP
+
+certManager:
+  enabled: true
+
+securityContext:
+  runAsNonRoot: true
+  runAsUser: 1001
+  allowPrivilegeEscalation: false
+  readOnlyRootFilesystem: true
+  seccompProfile:
+    type: RuntimeDefault
+  capabilities:
+    drop:
+      - ALL
+
+rbac:
+  create: true
+  clusterReadOnlyRole: true
+
+serviceAccount:
+  create: false
+
+metricsScraper:
+  enabled: false

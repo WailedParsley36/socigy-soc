@@ -1,0 +1,45 @@
+global:
+  enabled: true
+  tlsDisable: false
+
+server:
+  affinity: ""
+  extraEnvironmentVars:
+    VAULT_CACERT: /vault/userconfig/vault-ha-tls/vault.ca
+    VAULT_TLSCERT: /vault/userconfig/vault-ha-tls/vault.crt
+    VAULT_TLSKEY: /vault/userconfig/vault-ha-tls/vault.key
+  ha:
+    enabled: true
+    replicas: 1
+  listener:
+    tcp:
+      tls_disable: true
+      cert_file: /vault/tls/vault.crt
+      key_file: /vault/tls/vault.key
+      address: "0.0.0.0:8200"
+      cluster_address: "0.0.0.0:8201"
+
+  storage:
+    consul:
+      address: "consul-server.consul.svc.cluster.local:8500"
+      path: "vault/"
+
+  telemetry:
+    prometheus:
+      enabled: true
+      serviceMonitor:
+        enabled: true
+        interval: "30s"
+        scrapeTimeout: "10s"
+        metricRelabelings:
+          - sourceLabels: [__name__]
+            targetLabel: "__name__"
+            replacement: "vault_$$1"
+extraVolumes:
+  - name: vault-tls
+    secret:
+      secretName: vault-tls
+extraVolumeMounts:
+  - name: vault-tls
+    mountPath: /vault/tls
+    readOnly: true

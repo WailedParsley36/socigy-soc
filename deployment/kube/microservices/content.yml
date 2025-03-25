@@ -1,0 +1,113 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: content
+  namespace: default
+spec:
+  type: ClusterIP
+  ports:
+    - name: http
+      protocol: TCP
+      port: 8080
+      targetPort: 8080
+  selector:
+    app: content
+---
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: content
+  namespace: default
+automountServiceAccountToken: true
+---
+apiVersion: consul.hashicorp.com/v1alpha1
+kind: ServiceDefaults
+metadata:
+  name: content
+  namespace: default
+spec:
+  protocol: tcp
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: content
+  namespace: default
+  labels:
+    app: content
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: content
+  template:
+    metadata:
+      labels:
+        app: content
+      annotations:
+        consul.hashicorp.com/connect-inject: "true"
+        consul.hashicorp.com/connect-service-upstreams: "auth:8000,user:8001"
+    spec:
+      serviceAccountName: content
+      containers:
+        - name: content
+          image: socigy-content-microservice:latest
+          imagePullPolicy: Always
+          ports:
+            - containerPort: 8080
+          env:
+            - name: DB_USER
+              valueFrom:
+                secretKeyRef:
+                  name: content-service.main-db.credentials.postgresql.acid.zalan.do
+                  key: username
+            - name: DB_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: content-service.main-db.credentials.postgresql.acid.zalan.do
+                  key: password
+            - name: DB_HOST
+              value: main-db-pooler.default.svc.cluster.local
+            - name: DB_NAME
+              value: content_db
+            - name: DB_PORT
+              value: "5432"
+
+            - name: CDN_IMAGE_BUCKET
+              value: https://images.socigy.com
+            - name: CDN_VIDEO_BUCKET
+              value: https://videos.socigy.com
+            - name: CDN_AUDIO_BUCKET
+              value: https://audios.socigy.com
+
+            - name: CDN_SERVICE_URL
+              valueFrom:
+                secretKeyRef:
+                  name: content-service-secret
+                  key: serviceUrl
+            - name: CDN_SECRET_ACCESS_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: content-service-secret
+                  key: secretAccessKey
+            - name: CDN_ACCESS_KEY_ID
+              valueFrom:
+                secretKeyRef:
+                  name: content-service-secret
+                  key: accessKeyId
+            - name: CDN_TOKEN_VALUE
+              valueFrom:
+                secretKeyRef:
+                  name: content-service-secret
+                  key: tokenValue
+
+            - name: INTERNAL_CLIENT_ID
+              valueFrom:
+                secretKeyRef:
+                  name: content-service-secret
+                  key: id
+            - name: INTERNAL_CLIENT_SECRET
+              valueFrom:
+                secretKeyRef:
+                  name: content-service-secret
+                  key: secret

@@ -1,0 +1,92 @@
+global:
+  scrape_interval: 5s
+  scrape_timeout: 3s
+
+server:
+  podAnnotations:
+    consul.hashicorp.com/connect-inject: "false"
+  readinessProbeInitialDelay: 0
+  securityContext:
+    runAsUser: 65534
+    runAsNonRoot: true
+    runAsGroup: 655
+  persistentVolume:
+    enabled: true
+    size: 10Gi
+
+serviceMonitor:
+  enabled: true
+
+crds:
+  enabled: true
+
+service:
+  type: ClusterIP
+  port: 80
+  targetPort: 9090
+
+ingress:
+  enabled: false
+
+prometheusOperator:
+  enabled: true
+  createCustomResourceDefinitions: true
+
+scrapeConfigs:
+  - job_name: "consul"
+    scrape_interval: 15s
+    metrics_path: "/v1/agent/metrics"
+    scheme: "http"
+    static_configs:
+      - targets:
+          - "consul-server.consul.svc:8500"
+          - "consul-server.consul.svc:8501"
+          - "consul-server.consul.svc:8502"
+
+  - job_name: "kubernetes-nodes"
+    scrape_interval: 10s
+    kubernetes_sd_configs:
+      - role: node
+
+  - job_name: "kubernetes-pods"
+    scrape_interval: 10s
+    kubernetes_sd_configs:
+      - role: pod
+
+  - job_name: "kubernetes-service-endpoints"
+    scrape_interval: 10s
+    kubernetes_sd_configs:
+      - role: endpoints
+
+alertmanager:
+  enabled: true
+
+nodeExporter:
+  podAnnotations:
+    consul.hashicorp.com/connect-inject: "false"
+
+pushgateway:
+  podAnnotations:
+    consul.hashicorp.com/connect-inject: "false"
+
+kube-state-metrics:
+  podAnnotations:
+    consul.hashicorp.com/connect-inject: "false"
+
+serviceAccounts:
+  alertmanager:
+    create: true
+    name:
+    annotations: {}
+  nodeExporter:
+    create: true
+    name:
+    annotations: {}
+  pushgateway:
+    create: true
+    name:
+    annotations: {}
+  server:
+    create: true
+    name:
+    annotations: {}

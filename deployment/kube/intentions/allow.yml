@@ -1,0 +1,77 @@
+apiVersion: consul.hashicorp.com/v1alpha1
+kind: ServiceIntentions
+metadata:
+  name: api-gateway-to-nginx
+spec:
+  destination:
+    name: nginx
+  sources:
+    - name: api-gateway
+      action: allow
+---
+apiVersion: consul.hashicorp.com/v1alpha1
+kind: ServiceIntentions
+metadata:
+  name: services-to-auth
+spec:
+  destination:
+    name: auth
+  sources:
+    - name: nginx
+      action: allow
+    - name: user
+      action: allow
+    - name: content
+      action: allow
+    - name: plugins
+      action: allow
+---
+apiVersion: consul.hashicorp.com/v1alpha1
+kind: ServiceIntentions
+metadata:
+  name: nginx-to-frontend
+spec:
+  destination:
+    name: frontend
+  sources:
+    - name: nginx
+      action: allow
+---
+apiVersion: consul.hashicorp.com/v1alpha1
+kind: ServiceIntentions
+metadata:
+  name: nginx-to-user
+spec:
+  destination:
+    name: user
+  sources:
+    - name: nginx
+      action: allow
+    - name: auth
+      action: allow
+    - name: content
+      action: allow
+    - name: plugins
+      action: allow
+---
+apiVersion: consul.hashicorp.com/v1alpha1
+kind: ServiceIntentions
+metadata:
+  name: nginx-to-content
+spec:
+  destination:
+    name: content
+  sources:
+    - name: nginx
+      action: allow
+---
+apiVersion: consul.hashicorp.com/v1alpha1
+kind: ServiceIntentions
+metadata:
+  name: nginx-to-plugins
+spec:
+  destination:
+    name: plugins
+  sources:
+    - name: nginx
+      action: allow

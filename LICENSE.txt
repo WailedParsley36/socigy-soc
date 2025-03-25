@@ -1,0 +1,20 @@
+Proprietary Software License
+Copyright (c) 2025 [Patrik Stohanzl/Socigy s.r.o.]
+
+All rights reserved.
+
+License Grant: This software, its associated documentation files, and source code (collectively, the "Software") may not be used, copied, modified, merged, published, distributed, sublicensed, and/or sold without the express written permission of the copyright holder.
+
+Restrictions: You may not redistribute the Software or its source code in any form. You may not modify, reverse engineer, decompile, or disassemble the Software. The source code of the Software is strictly confidential and may not be shared, disclosed, or made accessible to any third party without explicit written authorization from the copyright holder.
+
+No Implied License: Except for the limited license rights expressly provided herein, the copyright holder reserves all right, title and interest in and to the Software, its source code, and all related intellectual property rights.
+
+No Warranty: The Software is provided "AS IS", without warranty of any kind, express or implied.
+
+Limitation of Liability: In no event shall the copyright holder be liable for any claim, damages or other liability arising from, out of or in connection with the Software or the use or other dealings in the Software.
+
+Termination: This license is effective until terminated. Your rights under this license will terminate automatically without notice if you fail to comply with any term of this license.
+
+Governing Law: This license shall be governed by and construed in accordance with the laws of [Your Jurisdiction].
+
+BY USING THE SOFTWARE, YOU ACKNOWLEDGE THAT YOU HAVE READ THIS LICENSE, UNDERSTAND IT AND AGREE TO BE BOUND BY ITS TERMS AND CONDITIONS.

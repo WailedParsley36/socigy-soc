@@ -1,0 +1,51 @@
+apiVersion: cert-manager.io/v1
+kind: Certificate
+metadata:
+  name: grafana-tls
+  namespace: monitoring
+spec:
+  secretName: grafana-tls-secret
+  issuerRef:
+    name: letsencrypt-dns
+    kind: ClusterIssuer
+  dnsNames:
+    - dev.grafana.api.socigy.com
+---
+apiVersion: cert-manager.io/v1
+kind: Certificate
+metadata:
+  name: kube-dashboard-tls
+  namespace: kubernetes-dashboard
+spec:
+  secretName: kube-dashboard-tls-secret
+  issuerRef:
+    name: letsencrypt-dns
+    kind: ClusterIssuer
+  dnsNames:
+    - kube-dashboard.api.socigy.com
+---
+apiVersion: cert-manager.io/v1
+kind: Certificate
+metadata:
+  name: consul-tls
+  namespace: consul
+spec:
+  secretName: consul-tls-secret
+  issuerRef:
+    name: letsencrypt-dns
+    kind: ClusterIssuer
+  dnsNames:
+    - dev.consul.api.socigy.com
+---
+apiVersion: cert-manager.io/v1
+kind: Certificate
+metadata:
+  name: consul-api-tls
+  namespace: consul
+spec:
+  secretName: consul-api-tls-secret
+  issuerRef:
+    name: letsencrypt-dns
+    kind: ClusterIssuer
+  dnsNames:
+    - dev.api.socigy.com

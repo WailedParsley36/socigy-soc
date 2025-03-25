@@ -1,0 +1,108 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: plugins
+  namespace: default
+spec:
+  selector:
+    app: plugins
+  ports:
+    - name: http
+      protocol: TCP
+      port: 8080
+      targetPort: 8080
+---
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: plugins
+  namespace: default
+automountServiceAccountToken: true
+---
+apiVersion: consul.hashicorp.com/v1alpha1
+kind: ServiceDefaults
+metadata:
+  name: plugins
+  namespace: default
+spec:
+  protocol: tcp
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: plugins
+  namespace: default
+  labels:
+    app: plugins
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: plugins
+  template:
+    metadata:
+      labels:
+        app: plugins
+      annotations:
+        consul.hashicorp.com/connect-inject: "true"
+        consul.hashicorp.com/connect-service-upstreams: "auth:8000,user:8001"
+    spec:
+      serviceAccountName: plugins
+      containers:
+        - name: plugins
+          image: socigy-plugins-microservice:latest
+          imagePullPolicy: Always
+          ports:
+            - containerPort: 8080
+          env:
+            - name: DB_USER
+              valueFrom:
+                secretKeyRef:
+                  name: plugin-service.main-db.credentials.postgresql.acid.zalan.do
+                  key: username
+            - name: DB_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: plugin-service.main-db.credentials.postgresql.acid.zalan.do
+                  key: password
+            - name: DB_HOST
+              value: main-db-pooler.default.svc.cluster.local
+            - name: DB_NAME
+              value: plugin_db
+            - name: DB_PORT
+              value: "5432"
+
+            - name: CDN_PLUGIN_BUCKET
+              value: https://plugins.socigy.com
+
+            - name: CDN_SERVICE_URL
+              valueFrom:
+                secretKeyRef:
+                  name: plugin-service-secret
+                  key: serviceUrl
+            - name: CDN_SECRET_ACCESS_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: plugin-service-secret
+                  key: secretAccessKey
+            - name: CDN_ACCESS_KEY_ID
+              valueFrom:
+                secretKeyRef:
+                  name: plugin-service-secret
+                  key: accessKeyId
+            - name: CDN_TOKEN_VALUE
+              valueFrom:
+                secretKeyRef:
+                  name: plugin-service-secret
+                  key: tokenValue
+
+            - name: INTERNAL_CLIENT_ID
+              valueFrom:
+                secretKeyRef:
+                  name: plugin-service-secret
+                  key: id
+            - name: INTERNAL_CLIENT_SECRET
+              valueFrom:
+                secretKeyRef:
+                  name: plugin-service-secret
+                  key: secret

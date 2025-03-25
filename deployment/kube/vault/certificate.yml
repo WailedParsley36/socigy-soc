@@ -1,0 +1,30 @@
+apiVersion: cert-manager.io/v1
+kind: Certificate
+metadata:
+  name: vault-tls
+  namespace: vault
+spec:
+  secretName: vault-tls-secret
+  duration: 8760h # 1 year
+  renewBefore: 720h # 30 days before expiry
+  issuerRef:
+    name: selfsigned-issuer
+    kind: ClusterIssuer
+  commonName: vault.vault.svc.cluster.local
+  dnsNames:
+    - vault.vault.svc.cluster.local
+    - vault
+    - vault.vault
+---
+apiVersion: cert-manager.io/v1
+kind: Certificate
+metadata:
+  name: vault-tls-ingress
+  namespace: vault
+spec:
+  secretName: vault-tls-ingress-secret
+  issuerRef:
+    name: letsencrypt-dns
+    kind: ClusterIssuer
+  dnsNames:
+    - vault.api.socigy.com

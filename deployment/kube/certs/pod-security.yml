@@ -1,0 +1,21 @@
+# apiVersion: policy/v1
+# kind: PodSecurityPolicy
+# metadata:
+#   name: cert-manager-restricted
+#   namespace: cert-manager
+# spec:
+#   privileged: false
+#   allowPrivilegeEscalation: false
+#   runAsUser:
+#     rule: MustRunAsNonRoot
+#   volumes:
+#     - "configMap"
+#     - "emptyDir"
+#     - "secret"
+#     - "projected"
+#     - "downwardAPI"
+#   readOnlyRootFilesystem: true
+#   seccompProfiles:
+#     - "RuntimeDefault"
+
+# # PSP is deprecated, instead I used PSA

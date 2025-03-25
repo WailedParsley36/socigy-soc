@@ -1,0 +1,93 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: user
+  namespace: default
+spec:
+  selector:
+    app: user
+  ports:
+    - name: http
+      protocol: TCP
+      port: 8080
+      targetPort: 8080
+---
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: user
+  namespace: default
+automountServiceAccountToken: true
+---
+apiVersion: consul.hashicorp.com/v1alpha1
+kind: ServiceDefaults
+metadata:
+  name: user
+  namespace: default
+spec:
+  protocol: tcp
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: user
+  namespace: default
+  labels:
+    app: user
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: user
+  template:
+    metadata:
+      labels:
+        app: user
+      annotations:
+        consul.hashicorp.com/connect-inject: "true"
+        consul.hashicorp.com/connect-service-upstreams: "auth:8000"
+    spec:
+      serviceAccountName: user
+      containers:
+        - name: user
+          image: socigy-user-microservice:latest
+          imagePullPolicy: Always
+          ports:
+            - containerPort: 8080
+          env:
+            - name: DB_USER
+              valueFrom:
+                secretKeyRef:
+                  name: user-service.main-db.credentials.postgresql.acid.zalan.do
+                  key: username
+            - name: DB_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: user-service.main-db.credentials.postgresql.acid.zalan.do
+                  key: password
+            - name: DB_HOST
+              value: main-db-pooler.default.svc.cluster.local
+            - name: DB_NAME
+              value: user_db
+            - name: DB_PORT
+              value: "5432"
+            - name: INTERNAL_CLIENT_ID
+              valueFrom:
+                secretKeyRef:
+                  name: user-service-secret
+                  key: id
+            - name: INTERNAL_CLIENT_SECRET
+              valueFrom:
+                secretKeyRef:
+                  name: user-service-secret
+                  key: secret
+            - name: SMTP_SECRET_TOKEN
+              valueFrom:
+                secretKeyRef:
+                  name: emailing-service-secret
+                  key: password
+            - name: SMTP_SECRET_EMAIL
+              valueFrom:
+                secretKeyRef:
+                  name: emailing-service-secret
+                  key: email

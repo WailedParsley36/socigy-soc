@@ -1,0 +1,61 @@
+syntax = "proto3";
+option csharp_namespace = "Socigy.Connectors.Auth.Tokens";
+
+service TokenGrpcService {
+	rpc VerifyAccessToken (AccessTokenVerification) returns (TokenDetailsResponse);
+
+	rpc GenerateTempChallengeInternal (TempChallengeRequest) returns (TempChallengeResponse);
+	rpc VerifyTempChallengeInternal (VerifyTempChallengeRequest) returns (VerifyTempChallengeResponse);
+	rpc DeleteTempChallengeInternal (DeleteTempChallengeRequest) returns (Empty);
+}
+
+message Empty {}
+
+message DeleteTempChallengeRequest {
+	string owner_id = 1;
+	string key = 2;
+}
+
+message VerifyTempChallengeResponse {
+	bool is_valid = 1;
+}
+
+message VerifyTempChallengeRequest {
+	string owner_id = 1;
+	string key = 2;
+
+	string challenge = 3;
+}
+
+message TempChallengeResponse {
+	string raw_challenge = 1;
+}
+
+message TempChallengeRequest {
+	string owner_id = 1;
+	string key = 2;
+
+	int64 expiry = 3;
+}
+
+message AccessTokenVerification {
+	string access_token = 1;
+
+	bool verify_user = 2;
+	bool verify_registration = 3;
+
+	string device_fingerprint = 4;
+}
+
+message RefreshTokenVerification {
+	string refresh_token = 1;
+}
+
+message TokenDetailsResponse {
+	bool is_valid = 1;
+	int64 expiry = 2;
+
+	string user_id = 3;
+	int32 device_id = 4;
+	string username = 5;
+}

@@ -1,0 +1,14 @@
+{
+  "name": "scripts",
+  "version": "1.0.0",
+  "description": "",
+  "main": "prepare_script_v1.js",
+  "scripts": {
+    "start": "node prepare_script_v1.js"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "uglify-js": "^3.19.3"
+  }
+}

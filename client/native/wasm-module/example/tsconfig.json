@@ -1,0 +1,10 @@
+{
+  "extends": "expo/tsconfig.base",
+  "compilerOptions": {
+    "strict": true,
+    "paths": {
+      "socigy-wasm": ["../src/index"],
+      "socigy-wasm/*": ["../src/*"]
+    }
+  }
+}

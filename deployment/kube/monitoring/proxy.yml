@@ -1,0 +1,47 @@
+apiVersion: consul.hashicorp.com/v1alpha1
+kind: ProxyDefaults
+metadata:
+  name: global
+spec:
+  mutualTLSMode: "strict"
+  accessLogs:
+    enabled: true
+  config:
+    envoy_prometheus_bind_addr: "0.0.0.0:20200"
+    # envoy_dynamically_configured_upstreams: true
+    # upstream_config:
+    #   - name: auth
+    #     protocol: "https"
+    #     tls:
+    #       validate_peer_cert: false
+    # envoy_tls_validation_context:
+    #   trusted_ca:
+    #     secret:
+    #       name: aspnet-tls-secret
+    #       namespace: default
+    # envoy_extra_static_clusters_json: |
+    #   {
+    #     "name": "loki",
+    #     "type": "STRICT_DNS",
+    #     "connect_timeout": "1s",
+    #     "lb_policy": "ROUND_ROBIN",
+    #     "load_assignment": {
+    #       "cluster_name": "loki",
+    #       "endpoints": [
+    #         {
+    #           "lb_endpoints": [
+    #             {
+    #               "endpoint": {
+    #                 "address": {
+    #                   "socket_address": {
+    #                     "address": "loki.monitoring.svc.cluster.local",
+    #                     "port_value": 3100
+    #                   }
+    #                 }
+    #               }
+    #             }
+    #           ]
+    #         }
+    #       ]
+    #     }
+    #   }

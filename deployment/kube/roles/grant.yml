@@ -1,0 +1,16 @@
+apiVersion: gateway.networking.k8s.io/v1beta1
+kind: ReferenceGrant
+metadata:
+  name: consul-reference-grant
+  namespace: default
+spec:
+  from:
+    - group: gateway.networking.k8s.io
+      kind: HTTPRoute
+      namespace: default
+    - group: gateway.networking.k8s.io
+      kind: GRPCRoute
+      namespace: default
+  to:
+    - group: ""
+      kind: Service

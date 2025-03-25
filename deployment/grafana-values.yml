@@ -1,0 +1,201 @@
+# envFromSecret: grafana-google-oauth-secret
+admin:
+  existingSecret: grafana-admin-secret
+  userKey: admin-user
+  passwordKey: admin-password
+
+env:
+  GF_DATE_FORMATS_FULL_DATE: "MMM Do, YYYY hh:mm:ss a"
+  GF_DATE_FORMATS_INTERVAL_SECOND: "hh:mm:ss a"
+  GF_DATE_FORMATS_INTERVAL_MINUTE: "hh:mm a"
+  GF_DATE_FORMATS_INTERVAL_HOUR: "DD/MM hh:mm a"
+  GF_DATE_FORMATS_INTERVAL_DAY: "DD/MM"
+  GF_DATE_FORMATS_INTERVAL_MONTH: "MM-YYYY"
+  GF_DATE_FORMATS_INTERVAL_YEAR: "YYYY"
+  GF_ADMIN_USER_PASSWORD:
+    valueFrom:
+      secretKeyRef:
+        name: grafana-users-secret
+        key: adminuserpassword
+  GF_EDITOR_USER_PASSWORD:
+    valueFrom:
+      secretKeyRef:
+        name: grafana-users-secret
+        key: editoruserpassword
+  GF_VIEWER_USER_PASSWORD:
+    valueFrom:
+      secretKeyRef:
+        name: grafana-users-secret
+        key: vieweruserpassword
+
+grafana.ini:
+  auth:
+    disable_login_form: false
+    disable_signout_menu: false
+    basic:
+      enabled: true
+      allow_sign_up: false
+  auth.google:
+    enabled: false
+  auth.anonymous:
+    enabled: false
+  security:
+    disable_gravatar: true
+    allow_embedding: false
+  analytics:
+    reporting_enabled: false
+
+securityContext:
+  runAsUser: 472
+  runAsGroup: 472
+  fsGroup: 472
+  runAsNonRoot: true
+
+containerSecurityContext:
+  allowPrivilegeEscalation: false
+  capabilities:
+    drop:
+      - ALL
+  readOnlyRootFilesystem: true
+
+service:
+  enabled: true
+  type: ClusterIP
+  port: 3000
+
+persistence:
+  enabled: true
+  type: pvc
+  accessModes:
+    - ReadWriteOnce
+  size: 10Gi
+
+networkPolicy:
+  enabled: true
+  allowExternal: false
+  explicitNamespacesSelector:
+    matchLabels:
+      kubernetes.io/metadata.name: monitoring
+
+  ingress:
+    - from:
+        - podSelector:
+            matchLabels:
+              app.kubernetes.io/name: ingress-nginx
+      ports:
+        - port: 3000
+          protocol: TCP
+
+  egress:
+    enabled: true
+    ports:
+      - port: 443
+        protocol: TCP
+      - port: 9093
+        protocol: TCP
+    to:
+      - podSelector:
+          matchLabels:
+            app.kubernetes.io/name: prometheus
+      - podSelector:
+          matchLabels:
+            app.kubernetes.io/name: alertmanager
+      - podSelector:
+          matchLabels:
+            app.kubernetes.io/name: loki
+
+log:
+  mode: console
+  level: warn
+  filters:
+    - "path:/login/*"
+    - "path:/api/*"
+
+testFramework:
+  enabled: false
+
+podLabels:
+  app: grafana
+
+podAnnotations:
+  consul.hashicorp.com/connect-inject: "false"
+
+rbac:
+  create: true
+  admin:
+    create: true
+  editor:
+    create: true
+  viewer:
+    create: true
+
+roleBindings:
+  - name: grafana-admin-binding
+    role: Admin
+    subjects:
+      - kind: User
+        name: "socigy_admin"
+        apiGroup: rbac.authorization.k8s.io
+  - name: grafana-editor-binding
+    role: Editor
+    subjects:
+      - kind: User
+        name: "socigy_editor"
+        apiGroup: rbac.authorization.k8s.io
+  - name: grafana-viewer-binding
+    role: Viewer
+    subjects:
+      - kind: User
+        name: "socigy_viewer"
+        apiGroup: rbac.authorization.k8s.io
+
+users:
+  - name: "socigy_admin"
+    email: "admin@socigy.com"
+    role: "Admin"
+    password: ${GF_ADMIN_USER_PASSWORD}
+  - name: "socigy_editor"
+    email: "ceo@socigy.com"
+    role: "Editor"
+    password: ${GF_EDITOR_USER_PASSWORD}
+  - name: "socigy_viewer"
+    email: "info@socigy.com"
+    role: "Viewer"
+    password: ${GF_VIEWER_USER_PASSWORD}
+
+datasources:
+  datasources.yaml:
+    apiVersion: 1
+    datasources:
+      - name: Prometheus
+        type: prometheus
+        orgId: 1
+        url: http://prometheus-server.monitoring.svc.cluster.local:80
+        access: proxy
+        isDefault: false
+        jsonData:
+          timeInterval: 5s
+        editable: true
+      - name: Loki
+        type: loki
+        access: proxy
+        url: http://loki.monitoring.svc.cluster.local:3100/
+        editable: true
+        isDefault: true
+
+dashboardProviders:
+  dashboardproviders.yaml:
+    apiVersion: 1
+    providers:
+      - name: "default"
+        orgId: 1
+        folder: ""
+        type: file
+        disableDeletion: false
+        editable: true
+        options:
+          path: /var/lib/grafana/dashboards/default
+
+dashboards:
+  default:
+    

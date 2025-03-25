@@ -1,0 +1,11 @@
+@Socigy.Microservices.Auth_HostAddress = http://localhost:5022
+
+GET {{Socigy.Microservices.Auth_HostAddress}}/todos/
+Accept: application/json
+
+###
+
+GET {{Socigy.Microservices.Auth_HostAddress}}/todos/1
+Accept: application/json
+
+###

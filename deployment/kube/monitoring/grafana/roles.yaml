@@ -1,0 +1,40 @@
+apiVersion: rbac.authorization.k8s.io/v1
+kind: Role
+metadata:
+  namespace: monitoring
+  name: grafana-admin
+rules:
+  - apiGroups: [""]
+    resources: ["services", "configmaps", "secrets", "pods"]
+    verbs: ["get", "list", "create", "update", "delete", "patch"]
+  - apiGroups: ["grafana.com"]
+    resources: ["dashboards", "datasources"]
+    verbs: ["get", "list", "create", "update", "delete"]
+
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: Role
+metadata:
+  namespace: monitoring
+  name: grafana-editor
+rules:
+  - apiGroups: [""]
+    resources: ["services", "configmaps", "secrets", "pods"]
+    verbs: ["get", "list", "update"]
+  - apiGroups: ["grafana.com"]
+    resources: ["dashboards", "datasources"]
+    verbs: ["get", "list", "update"]
+
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: Role
+metadata:
+  namespace: monitoring
+  name: grafana-viewer
+rules:
+  - apiGroups: [""]
+    resources: ["services", "configmaps", "secrets", "pods"]
+    verbs: ["get", "list"]
+  - apiGroups: ["grafana.com"]
+    resources: ["dashboards"]
+    verbs: ["get", "list"]

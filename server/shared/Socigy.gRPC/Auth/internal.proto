@@ -1,0 +1,22 @@
+syntax = "proto3";
+option csharp_namespace = "Socigy.Connectors.Auth.Internal";
+
+service InternalCredVerifier {
+	rpc Verify(ClientDetails) returns (VerificationResponse);
+}
+
+message ClientDetails {
+	string client_id = 1;
+	string client_secret = 2;
+}
+
+message VerificationResponse {
+	Error error = 1;
+	bool is_valid = 2;
+}
+
+message Error {
+	int32 code = 1;
+	string message = 2;
+	string details = 3;
+}

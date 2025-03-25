@@ -1,0 +1,159 @@
+global:
+  enabled: true
+  name: consul
+  image: "hashicorp/consul:latest"
+  datacenter: eu-central-1
+  gossipEncryption:
+    enabled: true
+  tls:
+    enabled: true
+    default: true
+    httpsOnly: true
+    verify: true
+    autoEncrypt: true
+  acls:
+    manageSystemACLs: true
+    defaultPolicy: "deny"
+    enableTokenPersistence: false
+    enableTokenReplication: false
+    defaultTokenTtl: "1h"
+    maxTokenTtl: "24h"
+  metrics:
+    enabled: true
+    provider: "prometheus"
+    enableAgentMetrics: true
+    enableGatewayMetrics: true
+    enableServerMetrics: true
+    agentMetricsRetentionTime: "1m"
+    disableAgentHostName: true
+    # TODO: Prometheus doesn't trust Consuls certificate...
+
+server:
+  enabled: true
+  replicas: 1
+  bootstrapExpect: 1
+  disruptionBudget:
+    enabled: true
+    maxUnavailable: 0
+  securityContext:
+    runAsNonRoot: true
+    runAsUser: 1000
+    fsGroup: 1000
+    allowPrivilegeEscalation: false
+  containerSecurityContext:
+    readOnlyRootFilesystem: true
+    allowPrivilegeEscalation: false
+    capabilities:
+      drop:
+        - ALL
+  extraConfig: |
+    {
+      "disable_remote_exec": true,  
+      "disable_update_check": true,
+      "log_level": "WARN"
+    }
+  affinity: ""
+
+controller:
+  enabled: true
+
+ui:
+  enabled: true
+  ingress:
+    enabled: true
+    ingressClassname: "nginx"
+    pathType: Prefix
+    annotations: |
+      cert-manager.io/cluster-issuer: "letsencrypt-dns"
+      kubernetes.io/ingressClassName: "nginx"
+      kubernetes.io/ingress.class: "nginx"
+      nginx.ingress.kubernetes.io/ssl-redirect: "true"
+      nginx.ingress.kubernetes.io/ssl-passtrough: "true"
+      nginx.ingress.kubernetes.io/backend-protocol: "HTTPS"
+    hosts:
+      - host: dev.consul.api.socigy.com
+      - host: localhost
+    tls:
+      - secretName: consul-tls-secret
+        hosts:
+          - dev.consul.api.socigy.com
+  dashboardURLTemplates:
+    service: "https://dev.grafana.api.socigy.com/d/eeembvnd5p5a8b/microservice-overview?orgId=1&var-service={{Service.Name}}&var-namespace={{Service.Namespace}}&var-datacenter={{Datacenter}}"
+  metrics:
+    enabled: true
+    provider: "prometheus"
+    baseURL: http://prometheus-server.monitoring.svc.cluster.local
+
+connectInject:
+  enabled: true
+  default: false
+  startupProbe:
+    initialDelaySeconds: 30
+    periodSeconds: 5
+    failureThreshold: 60
+  metrics:
+    defaultEnabled: true
+    defaultEnableMerging: true
+    defaultPrometheusScrapePort: 20200
+    defaultPrometheusScrapePath: "/metrics"
+    defaultMergedMetricsPort: 20100
+
+  apiGateway:
+    manageExternalCRDs: true
+    managedGatewayClass:
+      serviceType: LoadBalancer
+
+  securityContext:
+    runAsNonRoot: true
+    runAsUser: 1000
+    fsGroup: 1000
+    readOnlyRootFilesystem: true
+    allowPrivilegeEscalation: false
+  containerSecurityContext:
+    readOnlyRootFilesystem: true
+    allowPrivilegeEscalation: false
+    capabilities:
+      drop:
+        - ALL
+  extraConfig: |
+    {
+      "enable_intention_acls": true,
+      "enable_trust_domain": true,
+      "verify_incoming": true,
+      "verify_outgoing": true
+    }
+
+proxy:
+  enabled: true
+  enableGPRC: true
+
+federation:
+  enabled: false
+
+client:
+  enabled: true
+  grpc: true
+  exposeGossipPorts: true
+  affinity: ""
+
+terminatingGateways:
+  enabled: true
+#   gateways:
+#     - name: postgres-gateway
+#       services:
+#         - name: postgres-postgresql
+#           namespace: default
+#       caFile: /etc/consul/certs/ca.crt
+#       certFile: /etc/consul/certs/tls.crt
+#       keyFile: /etc/consul/certs/tls.key
+#       disableAutoHostRewrite: false
+
+# extraVolumes:
+#   - name: postgres-tls
+#     secret:
+#       secretName: postgres-tls-secret
+
+# extraVolumeMounts:
+#   - name: postgres-tls
+#     mountPath: /etc/consul/certs
+#     readOnly: true

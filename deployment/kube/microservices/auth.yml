@@ -1,0 +1,160 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: auth
+  namespace: default
+spec:
+  type: ClusterIP
+  ports:
+    - name: http
+      port: 8080
+      targetPort: 8080
+  selector:
+    app: auth
+---
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: auth
+  namespace: default
+automountServiceAccountToken: true
+---
+apiVersion: consul.hashicorp.com/v1alpha1
+kind: ServiceDefaults
+metadata:
+  name: auth
+  namespace: default
+spec:
+  protocol: tcp
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: auth
+  namespace: default
+  labels:
+    app: auth
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: auth
+  template:
+    metadata:
+      labels:
+        app: auth
+      annotations:
+        consul.hashicorp.com/connect-inject: "true"
+        consul.hashicorp.com/connect-service-upstreams: "user:8001"
+    spec:
+      serviceAccountName: auth
+      containers:
+        - name: auth
+          image: socigy-auth-microservice:latest
+          imagePullPolicy: Always
+          ports:
+            - containerPort: 8080
+              name: http
+          env:
+            - name: DB_USER
+              valueFrom:
+                secretKeyRef:
+                  name: auth-service.main-db.credentials.postgresql.acid.zalan.do
+                  key: username
+            - name: DB_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: auth-service.main-db.credentials.postgresql.acid.zalan.do
+                  key: password
+            - name: DB_HOST
+              value: main-db-pooler.default.svc.cluster.local
+            - name: DB_NAME
+              value: auth_db
+            - name: DB_PORT
+              value: "5432"
+            - name: SOCIGY_ACCESS_SECRET
+              valueFrom:
+                secretKeyRef:
+                  name: auth-service-tokens
+                  key: access
+            - name: SOCIGY_REFRESH_SECRET
+              valueFrom:
+                secretKeyRef:
+                  name: auth-service-tokens
+                  key: refresh
+            - name: INTERNAL_CLIENT_ID
+              valueFrom:
+                secretKeyRef:
+                  name: auth-service-secret
+                  key: id
+            - name: INTERNAL_CLIENT_SECRET
+              valueFrom:
+                secretKeyRef:
+                  name: auth-service-secret
+                  key: secret
+            - name: SMTP_SECRET_TOKEN
+              valueFrom:
+                secretKeyRef:
+                  name: emailing-service-secret
+                  key: password
+            - name: SMTP_SECRET_EMAIL
+              valueFrom:
+                secretKeyRef:
+                  name: emailing-service-secret
+                  key: email
+---
+apiVersion: v1
+kind: Secret
+metadata:
+  name: auth-service-tokens
+data:
+  access: KFwlfidGenpWdyhQKERzSmZBLGhzNm14TlBxQyQ5US5NNSEqUjdSJzVkck5YWy5XIWtSdFE7ZXdRREdtRVs1R3NmJXBORiolJ0BWNk1xUD83aFN3bXRWcHprP3VVJlM5Jy86XFovdG5mITUueURHc1hRL0opdiJJW0NoXENYL2JJeFs/JntYJyhCW1NdVXRaNltBZXgo
+  refresh: Z3Q4SXc4NH0pNXEuLDJFeHQpWVVDUklJaCkoOzxZR3lXW3QkI3F1fmt7NHpUe3pHVXtoSWtofUpiQlpuWUEjKW1dcTtYSjNAYXU7JCoyQjx4LDxCVS8yaENzIydnKT5uKltZWlFhYWh6fUFDWDhTN0JOIlVdUD9WQmBtfUt4IiNNYUh6WEVAJylWPFh3SDR0c2dZWFsj
+---
+apiVersion: v1
+kind: Secret
+metadata:
+  name: emailing-service-secret
+data:
+  password: Vm5ETTExbmZybnVU
+  email: bm8tcmVwbHlAc29jaWd5LmNvbQ==
+---
+apiVersion: v1
+kind: Secret
+metadata:
+  name: auth-service-secret
+data:
+  id: ZE1HQ1pCYU9ucVlZMVdnNg==
+  secret: SHQpMCZlailrLjdneHsyNy10cC4zWmIzXkElY1EsVC5XQ1NBJGNYMGozZnYoeSlLUkQ=
+---
+apiVersion: v1
+kind: Secret
+metadata:
+  name: user-service-secret
+data:
+  id: U05sYmoxdjduZnBNR2Vidg==
+  secret: Kyt7aVkxSEJUISZ1JmV2fl49UDhMaE5lTnZvV0AoTXAkSnNBSUNeeG1OK2F5fSRYeUU=
+---
+apiVersion: v1
+kind: Secret
+metadata:
+  name: content-service-secret
+data:
+  id: dU1yY1V5dW44ME5zaG1RMQ==
+  secret: aHk7MylJLnArcm4yQUBbYnRwRCR4X1glSVsuS1YtakQyVCRRekdybjdNNDMmMktxdFk=
+  serviceUrl: aHR0cHM6Ly9jMmNjY2VmYjVmYjkzMjJiMWJhODAzMzVlMDBjYWZiMS5yMi5jbG91ZGZsYXJlc3RvcmFnZS5jb20=
+  secretAccessKey: ZDNhYmFmODEyOGQzY2FlOTU4ZjBjM2I1NGFlYzdiM2QzZDA5NDQyNzc1ZTI5Yjg1ZTRlMDYxMTQ1ZDQ0YzViNw==
+  accessKeyId: MDQyZjExNWUyNWRmZTc4ZDc5MmE3ZjA4Njc0OGUyZDE=
+  tokenValue: blhXbDV4NUwyMmRORUExSnAtLUNoVS1SRmQ2NGJpZVF6Y1A3bFduTg==
+---
+apiVersion: v1
+kind: Secret
+metadata:
+  name: plugin-service-secret
+data:
+  id: cDAxMHUxdFlKaGtjWHdvYQ==
+  secret: YlRqNEonZ15feSMnOUZ+Q0d4ZS5xXlRvXSEjK0JIMDRhVnNuJX1BazY2TGNRelkmTVI=
+  serviceUrl: aHR0cHM6Ly9jMmNjY2VmYjVmYjkzMjJiMWJhODAzMzVlMDBjYWZiMS5yMi5jbG91ZGZsYXJlc3RvcmFnZS5jb20=
+  secretAccessKey: ODJhZTFkMjQ1MjMzZjE4NTVjMDVmNGNiYTgzNGFhN2M5NDNjMzlmMzlmOTQxNzM5ZmM2ZDBlYzI5ZDRlN2Q0Nw==
+  accessKeyId: M2NhNjQ3MjdmZDA4ZjViOGE0ODljMTVhZWMwYWMwYjI=
+  tokenValue: UUxyMlpNNGtrcmtfOWZ1Rk9IeFBwREdfbldFRERnOWZtTlRHX1ljaA==

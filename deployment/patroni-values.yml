@@ -1,0 +1,84 @@
+# postgresql:
+#   replication:
+#     enabled: true                     
+#     numSync: 2                         
+#     syncReplication: true              
+#   persistence:
+#     enabled: true                      
+#     storageClass: "standard"           
+#     size: 10Gi                          
+#   postgresqlDatabase: patroni          
+
+# replica:
+#   replicas: 3                          
+#   antiAffinity: "soft"                
+
+# patroni:
+#   consul:
+#     enabled: true
+#     address: consul-server:8500 
+
+#   dcs:
+#     consul:
+#       host: consul-server:8500
+
+#   resources:
+#     limits:
+#       cpu: "2"                       
+#       memory: "4Gi"                  
+#     requests:
+#       cpu: "1"                       
+#       memory: "2Gi"                  
+
+#   livenessProbe:
+#     initialDelaySeconds: 30
+#     periodSeconds: 10
+#     failureThreshold: 3
+#     successThreshold: 1
+#     timeoutSeconds: 5
+
+#   readinessProbe:
+#     initialDelaySeconds: 15
+#     periodSeconds: 5
+#     failureThreshold: 3
+#     successThreshold: 1
+#     timeoutSeconds: 3
+
+#   updateStrategy:
+#     type: RollingUpdate
+#     rollingUpdate:
+#       maxSurge: 1
+#       maxUnavailable: 0
+
+#   authentication:
+#     enabled: true                       
+#     password: "your-strong-password-here"  
+#     replicationPassword: "replication-password"
+
+#   tls:
+#     enabled: true
+#     certFile: "/etc/ssl/certs/tls.crt" 
+#     keyFile: "/etc/ssl/private/tls.key"
+#     caFile: "/etc/ssl/certs/ca.crt"    
+
+#   postgresql:
+#     maxConnections: 100
+#     sharedBuffers: "4GB"
+#     workMem: "64MB"
+#     maintenanceWorkMem: "256MB"
+#     effectiveCacheSize: "12GB"
+
+#   logging:
+#     level: "INFO"                         
+#     log_statement: "none"                 
+#     log_connections: "on"                 
+#     log_duration: "on"                    
+#     log_error_verbosity: "verbose"        
+
+#   postgresql:
+#     walLevel: "replica"
+#     archiveMode: "on"
+#     archiveCommand: "/bin/true"
+#     maxWalSize: "1GB"
+#     minWalSize: "80MB"
+#     checkpointCompletionTarget: 0.9

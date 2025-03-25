@@ -1,0 +1,7 @@
+<resources>
+    <string name="asset_statements">
+        [{
+            \"include\": \"https://socigy.com/.well-known/assetlinks.json\"
+          }]
+    </string>
+</resources>

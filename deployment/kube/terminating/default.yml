@@ -1,0 +1,92 @@
+apiVersion: consul.hashicorp.com/v1alpha1
+kind: TerminatingGateway
+metadata:
+  name: terminating-gateway
+spec:
+  services:
+    - name: loki-external
+    - name: db-external
+    - name: zoho-smtp
+---
+apiVersion: consul.hashicorp.com/v1alpha1
+kind: ServiceDefaults
+metadata:
+  name: loki-external
+spec:
+  protocol: tcp
+  destination:
+    addresses:
+      - "loki.monitoring.svc.cluster.local"
+    port: 3100
+---
+apiVersion: consul.hashicorp.com/v1alpha1
+kind: ServiceIntentions
+metadata:
+  name: loki-external
+spec:
+  destination:
+    name: loki-external
+  sources:
+    - name: "*"
+      action: allow
+---
+apiVersion: consul.hashicorp.com/v1alpha1
+kind: ServiceDefaults
+metadata:
+  name: db-external
+spec:
+  protocol: tcp
+  destination:
+    addresses:
+      - "socigy-main-db.default.svc.cluster.local"
+    port: 5432
+---
+apiVersion: consul.hashicorp.com/v1alpha1
+kind: ServiceDefaults
+metadata:
+  name: zoho-smtp
+spec:
+  protocol: tcp
+  meshGateway:
+    mode: none
+  mutualTLSMode: ""
+  transparentProxy:
+    dialedDirectly: true
+  destination:
+    addresses:
+      - "smtp.zoho.eu"
+    port: 587
+---
+apiVersion: consul.hashicorp.com/v1alpha1
+kind: ServiceIntentions
+metadata:
+  name: db-external
+spec:
+  destination:
+    name: db-external
+  sources:
+    - name: "auth"
+      action: allow
+    - name: "user"
+      action: allow
+    - name: "content"
+      action: allow
+    - name: "plugin"
+      action: allow
+---
+apiVersion: consul.hashicorp.com/v1alpha1
+kind: ServiceIntentions
+metadata:
+  name: zoho-smtp
+spec:
+  destination:
+    name: zoho-smtp
+  sources:
+    - name: "auth"
+      action: allow
+    - name: "user"
+      action: allow
+    - name: "content"
+      action: allow
+    - name: "plugin"
+      action: allow

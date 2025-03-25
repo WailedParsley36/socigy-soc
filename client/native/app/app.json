@@ -1,0 +1,132 @@
+{
+  "expo": {
+    "name": "Socigy",
+    "slug": "socigy",
+    "version": "1.0.0",
+    "orientation": "portrait",
+    "icon": "./assets/icons/icon.png",
+    "scheme": "socigy",
+    "userInterfaceStyle": "automatic",
+    "newArchEnabled": true,
+    "ios": {
+      "supportsTablet": true,
+      "infoPlist": {
+        "NSCameraUsageDescription": "Allow Socigy access to your camera",
+        "NSMicrophoneUsageDescription": "Allow Socigy access to your microphone"
+      },
+      "bundleIdentifier": "com.socigy.android"
+    },
+    "android": {
+      "useNextNotificationsApi": true,
+      "googleServicesFile": "./credentials/android/google-services.json",
+      "intentFilters": [
+        {
+          "action": "VIEW",
+          "autoVerify": true,
+          "data": [
+            {
+              "scheme": "https",
+              "host": "*.socigy.com",
+              "pathPrefix": "/app"
+            }
+          ],
+          "category": ["BROWSABLE", "DEFAULT"]
+        }
+      ],
+      "adaptiveIcon": {
+        "foregroundImage": "./assets/icons/adaptive-icon.png",
+        "backgroundColor": "#000000"
+      },
+      "package": "com.socigy.android",
+      "permissions": [
+        "android.permission.READ_CONTACTS",
+        "android.permission.WRITE_CONTACTS",
+        "android.permission.INTERNET",
+        "android.permission.READ_EXTERNAL_STORAGE",
+        "android.permission.WRITE_EXTERNAL_STORAGE",
+        "android.permission.ACCESS_MEDIA_LOCATION",
+        "android.permission.CAMERA",
+        "android.permission.RECORD_AUDIO",
+        "android.permission.SCHEDULE_EXACT_ALARM"
+      ]
+    },
+    "androidStatusBar": {
+      "translucent": true,
+      "backgroundColor": "#000000"
+    },
+    "web": {
+      "bundler": "metro",
+      "output": "static",
+      "favicon": "./assets/images/favicon.png"
+    },
+    "plugins": [
+      "expo-router",
+      [
+        "expo-splash-screen",
+        {
+          "backgroundColor": "#000000",
+          "image": "./assets/images/splash.png",
+          "dark": {
+            "image": "./assets/images/splash.png",
+            "backgroundColor": "#000000"
+          },
+          "imageWidth": 1292
+        }
+      ],
+      [
+        "expo-contacts",
+        {
+          "contactsPermission": "Allow Socigy to access your contacts"
+        }
+      ],
+      "expo-font",
+      [
+        "expo-secure-store",
+        {
+          "configureAndroidBackup": true,
+          "faceIDPermission": "Allow Socigy to access your Face ID biometric data to decrypt your Secure-Socigy data"
+        }
+      ],
+      [
+        "expo-media-library",
+        {
+          "photosPermission": "Allow Socigy to access your photos.",
+          "savePhotosPermission": "Allow Socigy to save photos.",
+          "isAccessMediaLocationEnabled": true
+        }
+      ],
+      [
+        "react-native-vision-camera",
+        {
+          "cameraPermissionText": "Allow Socigy access to your camera",
+          "microphonePermissionText": "Allow Socigy access to your microphone",
+          "enableMicrophonePermission": true,
+          "enableCodeScanner": true,
+          "enableFrameProcessors": true
+        }
+      ],
+      [
+        "expo-notifications",
+        {
+          "icon": "./assets/icons/notification_icon.png",
+          "color": "#000000",
+          "defaultChannel": "default",
+          "sounds": [
+            "./assets/sounds/notification.mp3",
+            "./assets/sounds/notification_longer.mp3"
+          ],
+          "enableBackgroundRemoteNotifications": true
+        }
+      ]
+    ],
+    "experiments": {
+      "typedRoutes": true
+    },
+    "extra": {
+      "eas": {
+        "projectId": "b2859ab7-f4d0-44b0-88fd-52e8fd664aaa"
+      }
+    },
+    "owner": "wailedparsley36"
+  }
+}

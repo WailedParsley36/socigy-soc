@@ -1,0 +1,38 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+	<PropertyGroup>
+		<TargetFramework>net8.0</TargetFramework>
+		<ImplicitUsings>enable</ImplicitUsings>
+		<Nullable>enable</Nullable>
+	</PropertyGroup>
+
+	<ItemGroup>
+		<Protobuf Include="Auth\*.proto" GrpcServices="None" />
+	</ItemGroup>
+
+	<ItemGroup>
+		<None Remove="auth\internal.proto" />
+		<None Remove="Auth\tokens.proto" />
+		<None Remove="base_types.proto" />
+		<None Remove="User\info.proto" />
+	</ItemGroup>
+
+	<ItemGroup>
+		<PackageReference Include="Grpc.AspNetCore" Version="2.67.0" />
+	</ItemGroup>
+
+	<ItemGroup>
+		<Folder Include="Localization\" />
+	</ItemGroup>
+
+	<ItemGroup>
+	  <Protobuf Include="base_types.proto" GrpcServices="None" ProtoCompile="False" />
+	  <Protobuf Include="User\info.proto" GrpcServices="None" ProtoCompile="False" />
+	</ItemGroup>
+
+	<ItemGroup>
+		<Protobuf Update="Auth\internal.proto" ProtoCompile="False" />
+		<Protobuf Update="Auth\tokens.proto" ProtoCompile="False" />
+	</ItemGroup>
+
+</Project>

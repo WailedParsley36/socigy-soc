@@ -1,0 +1,17 @@
+{
+  "platforms": [
+    "apple",
+    "android",
+    "web"
+  ],
+  "apple": {
+    "modules": [
+      "SocigyWasmModule"
+    ]
+  },
+  "android": {
+    "modules": [
+      "expo.modules.socigy.wasm.SocigyWasmModule"
+    ]
+  }
+}

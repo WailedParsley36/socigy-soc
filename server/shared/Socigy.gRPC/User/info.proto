@@ -1,0 +1,85 @@
+syntax = "proto3";
+option csharp_namespace = "Socigy.Connectors.User.Info";
+
+service UserInfoGrpcService {
+	rpc GetUserInfoByIdInternal (UserInfoRequest) returns (UserDetails);
+	rpc GetUserInfoById (UserInfoRequest) returns (UserDetails);
+
+	// Internal
+	rpc RegisterNewUserInternal (RegisterNewUserInternalRequest) returns (RegisterNewUserInternalResponse);
+	rpc RemoveRegisteredNewUserInternal (UserInfoRequest) returns (RemoveRegisteredNewUserInternalResponse);
+	
+	rpc CheckUserInfoExistsInternal (CheckInfoExistsInternalRequest) returns (CheckResponseInternalResponse);
+	rpc CheckUserInfoVerifiedInternal (UserInfoRequest) returns (CheckResponseInternalResponse);
+	rpc CheckUserIsRegisteredInternal (UserInfoRequest) returns (CheckResponseInternalResponse);
+
+	rpc VerifyUserEmailInternal (UserInfoRequest) returns (Empty);
+
+	rpc VerifyUserCircleIdsExistsInternal (UserCircleVerificationRequest) returns (RemoveRegisteredNewUserInternalResponse);
+	rpc GetUserInfoBatchInternal (UserCircleVerificationRequest) returns (stream UserDetails);
+
+	rpc GetUsersBlockedTargetIdsInternal (UserInfoRequest) returns (UserCircleVerificationRequest);
+}
+
+message Empty {}
+
+message UserCircleVerificationRequest {
+	repeated string ids = 1;
+}
+
+message UserInfoRequest {
+	string target_user_id = 1;
+}
+
+message UserDetails {
+	string email = 1;
+
+	string username = 2;
+	int32 tag = 3;
+
+	string first_name = 4;
+	string last_name = 5;
+
+	string icon_url = 6;
+	string id = 7;
+}
+
+message RemoveRegisteredNewUserInternalResponse {
+	Error error = 1;
+	bool success = 2;
+}
+
+message CheckInfoExistsInternalRequest {
+	string email = 1;
+
+	string username = 2;
+	int32 tag = 3;
+}
+message CheckResponseInternalResponse {
+	bool result = 1;
+
+	string user_uuid = 2;
+	string email = 3;
+	string username = 4;
+	int32 tag = 5;
+}
+
+message RegisterNewUserInternalRequest {
+	string email = 1;
+
+	string first_name = 2;
+	string last_name = 3;
+
+	string username = 4;
+	int32 tag = 5;
+}
+message RegisterNewUserInternalResponse {
+	Error error = 1;
+	string new_user_id = 2;
+}
+
+message Error {
+	int32 code = 1;
+	string message = 2;
+	string details = 3;
+}
