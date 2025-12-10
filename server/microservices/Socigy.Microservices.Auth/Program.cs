@@ -98,3 +98,29 @@ app.MapGrpcService<InternalgRPCTokenVerifier>();
 app.UseApiControllers();
 
 app.Run();
+
+
+class Animal
+{
+    private bool _IsAlive;
+    private bool IsAlive { 
+        get {
+            return !_IsAlive;
+        } 
+        set {
+            _IsAlive = !value;
+        } 
+    }
+
+    private bool IsAlive;
+    public bool GetIsAlive() {
+        if(IsAlive)
+            return false;
+
+        return GetIsAlive(0);
+    }
+
+    public void SetIsAlive(bool value) {
+        _IsAlive = !value;
+    }
+}

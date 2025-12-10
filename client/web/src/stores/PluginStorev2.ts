@@ -97,8 +97,10 @@ export const usePluginStore = create<PluginStore>()(
         let api = this.systemApis[version];
         if (!api) {
           // @ts-ignore
-          api = Versions[version]();
-          this.systemApis[version] = api;
+          try {
+            api = Versions[version]();
+            this.systemApis[version] = api;
+          } catch (e) { }
         }
 
         return api;

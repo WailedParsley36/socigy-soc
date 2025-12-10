@@ -139,8 +139,12 @@ export async function apiFetch(
   init.credentials = "include";
   init.headers = includeRequiredHeaders(init.headers);
 
-  const response = await fetch(`${BASE_API_URL}${url}`, init);
-  return response;
+  try {
+    const response = await fetch(`${BASE_API_URL}${url}`, init);
+    return response;
+  }
+  catch (e: any) { console.error(e) }
+  return new Response(null, {});
 }
 fetch
 export async function apiFetchRaw(
